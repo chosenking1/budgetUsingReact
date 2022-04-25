@@ -1,9 +1,18 @@
-import React from 'react';
+import React, {useState} from 'react';
 import './BudgetBody.css'
 import {toDatetimeLocal} from "../../util";
 
 const BudgetDetails = (props) => {
     let {budget, setBudget, balance, setBalance, selectOpt} = props
+    const [input, setInput] = useState("")
+
+    const handleInput = (e) =>{
+        setInput(e.target.value)
+    }
+    const filterTable = () => {
+        let newObject = [...budget]
+        setBudget(newObject.filter((data)=> input === data["budgetDescription"] || input === data["budgetName"]))
+    }
 
     const deleteEntry = (objectId, budgetAmount) => {
         let newObject = [...budget]
@@ -14,7 +23,15 @@ const BudgetDetails = (props) => {
 
     return (
         <div className="budget-details-container">
+            <div>
             <h1>Details</h1>
+                <div>
+                    <label>Search For: </label>
+                    <input onChange={handleInput}/>
+                    <button onClick={filterTable}>Search</button>
+                </div>
+
+            </div>
             {budget.length > 0
                 ?
                 <table>

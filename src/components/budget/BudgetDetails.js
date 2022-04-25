@@ -1,9 +1,17 @@
 import React, {useState} from 'react';
 import './BudgetBody.css'
 import {toDatetimeLocal} from "../../util";
+import {useDispatch, useSelector} from "react-redux";
+import {deleteBudgetAction} from "../../redux/action/budget";
+import {useLocation} from "react-router-dom";
 
 const BudgetDetails = (props) => {
     let {budget, setBudget, balance, setBalance, selectOpt} = props
+
+    const  { budgetState } = useSelector((state) => state.budgetReducer)
+    const dispatch = useDispatch()
+
+
     const [input, setInput] = useState("")
 
     const handleInput = (e) =>{
@@ -14,12 +22,16 @@ const BudgetDetails = (props) => {
         setBudget(newObject.filter((data)=> input === data["budgetDescription"] || input === data["budgetName"]))
     }
 
-    const deleteEntry = (objectId, budgetAmount) => {
-        let newObject = [...budget]
-        setBudget(newObject.filter((data, index)=>index !== objectId))
-        let reverseBalance = balance + budgetAmount
-        setBalance(reverseBalance)
+    const deleteEntry = (objectId, amount) => {
+        // let newObject = [...budget]
+        // setBudget(newObject.filter((data, index)=>index !== objectId))
+        // let reverseBalance = balance + budgetAmount
+        // setBalance(reverseBalance)
+        dispatch(deleteBudgetAction({id:objectId,amount}))
     }
+
+    let location = useLocation()
+    let currency = new URLSearchParams(location.search).get("currency")
 
     return (
         <div className="budget-details-container">
@@ -32,7 +44,7 @@ const BudgetDetails = (props) => {
                 </div>
 
             </div>
-            {budget.length > 0
+            {budgetState.length > 0
                 ?
                 <table>
                     <tr className="table-header">
@@ -42,7 +54,7 @@ const BudgetDetails = (props) => {
                         <th>Description</th>
                         <th></th>
                     </tr>
-                    {budget.map( (data, index) =>
+                    {budgetState.map( (data, index) =>
                     <tr key={index} className="data-row">
                         <td>{toDatetimeLocal(data.date)}</td>
                         <td>{data.budgetName}</td>

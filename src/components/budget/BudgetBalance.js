@@ -1,14 +1,17 @@
 import React, {useEffect, useState} from 'react';
 import "./BudgetBalance.css"
 import axios from "axios";
+import {useSelector} from "react-redux";
 
 const BudgetBalance = (props) => {
+    let initialValue = props.balance
     const [input, setInput] = useState("")
     const [exchangeRate, setExchangeRate] = useState({})
     const [selectOption, setSelectOption] = useState("")
 
     // let {budget} = props
     let{budget, setSelectOpt} = props
+    const {budgetAmount} = useSelector(state => state.budgetReducer)
 
     const handleInput = (e) => {
       setInput(e.target.value)
@@ -49,7 +52,7 @@ const BudgetBalance = (props) => {
     return (
         <div className="budgetBalance">
            <div className="balance">
-               {props.balance}
+               {budgetAmount}
            </div>
             <select className="balance-dropdown" onChange={handleSelect}>
                 {Object.keys(exchangeRate).length > 0 &&

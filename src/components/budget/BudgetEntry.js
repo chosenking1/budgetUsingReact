@@ -1,8 +1,13 @@
 import React, {useState} from 'react';
 import budget from "../../Budget";
+import {useDispatch} from "react-redux";
+import {addItemToBudget} from "../../redux/action/budget";
 
 const BudgetEntry = (props) => {
     let {budget, setBudget, balance,setBalance} = props
+
+    const dispatch = useDispatch()
+    // const [input, setInput] =useState({budgetName:'', budgetAmount:'', budgetDescription:''})
 
     const [input, setInput] = useState({budgetName:'', budgetAmount:'', budgetDescription:'', date:''})
 
@@ -12,20 +17,27 @@ const BudgetEntry = (props) => {
 
 
     const createBudget = () => {
-      let budgetData = [{...input,date: Date.now()}, ...budget]
-        let savedBudget = {...input}
+        if (input.budgetAmount <= balance) {
 
-        if(!(balance - savedBudget.budgetAmount < 0)){
+            let budgetData = [{...input, date: Date.now()}, ...budget]
+            let budgetStoreData = {...input, date: Date.now()}
             setBudget(budgetData)
-
-            let newBalance = balance - savedBudget.budgetAmount
-            setBalance(newBalance)
+            dispatch(addItemToBudget(budgetStoreData))
+            setBalance(balance - input.budgetAmount)
         }
-        else setBalance((initial)=> {
-            setTimeout(() => setBalance(initial), 5000)
-            return "Budget limit exceeded"
-        })
-
+    //     let savedBudget = {...input}
+    // }
+    //     if(!(balance - savedBudget.budgetAmount < 0)){
+    //         setBudget(budgetData)
+    //
+    //         let newBalance = balance - savedBudget.budgetAmount
+    //         setBalance(newBalance)
+    //     }
+    //     else setBalance((initial)=> {
+    //         setTimeout(() => setBalance(initial), 5000)
+    //         return "Budget limit exceeded"
+    //     })
+    //
     }
     return (
         <div className="budget-entry-container">
